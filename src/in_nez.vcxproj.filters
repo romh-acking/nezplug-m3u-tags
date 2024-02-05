@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ui">
+      <UniqueIdentifier>{d54027cc-fd69-4127-bc40-9975888936f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ui\winamp">
+      <UniqueIdentifier>{223e7603-cef0-40e5-ba56-8f5415bcd909}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ui\winamp\minisdk">
+      <UniqueIdentifier>{4fc7c374-65f0-4409-9129-4a5cd351c719}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="win32">
+      <UniqueIdentifier>{ee7ec809-4d1f-462e-bb60-8f94b440021e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tag">
+      <UniqueIdentifier>{0af60d43-bb34-42a5-9e68-1e01f9ed66f6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ui\nezplug\ChMask.c">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\nezplug\Dialog.c">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\nezplug\Dump.c">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\nezplug\FileInfo.c">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\nezplug\MemView.c">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\nezplug\IOView.c">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\winamp\con_nez.c">
+      <Filter>ui\winamp</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\winamp\in_nez.c">
+      <Filter>ui\winamp</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\winamp\seq_nez.c">
+      <Filter>ui\winamp</Filter>
+    </ClCompile>
+    <ClCompile Include="common\win32\csowin32.c">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="common\win32\win32dll.c">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="tag\tag.c">
+      <Filter>tag</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ui\nezplug\ChMask.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\nezplug\Dialog.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\nezplug\Dump.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\nezplug\FileInfo.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\nezplug\MemView.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\nezplug\IOView.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\winamp\con_nez.h">
+      <Filter>ui\winamp</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\winamp\in_nez.h">
+      <Filter>ui\winamp</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\winamp\in_xxx.h">
+      <Filter>ui\winamp</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\winamp\sequencer.h">
+      <Filter>ui\winamp</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\winamp\minisdk\In2.h">
+      <Filter>ui\winamp\minisdk</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\winamp\minisdk\Out.h">
+      <Filter>ui\winamp\minisdk</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\winamp\minisdk\wafe.h">
+      <Filter>ui\winamp\minisdk</Filter>
+    </ClInclude>
+    <ClInclude Include="common\cso.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="common\win32\win32l.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="tag\tag.h">
+      <Filter>tag</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ui\winamp\in_nez.def">
+      <Filter>ui\winamp</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ui\nezplug\nezplug.rc">
+      <Filter>ui\winamp</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

@@ -240,24 +240,41 @@ static CRITICAL_SECTION_OBJECT(playlock);
 
 static int play(char *fn)
 {
+	if (fn == NULL)
+	{
+		return 1;
+	}
+
 	SEQUENCER *sequencer;
 #if !N_VERSION
 	int samplerate, maxlatency, ch;
 #endif
-	if (player_data.hEvent == NULL) return 1;
-
+	if (player_data.hEvent == NULL) 
+	{
+		return 1;
+	}
 	InitSequencer(mod.hDllInstance);//Ä¶–ˆ‚ÉÝ’è‚ð”½‰f‚³‚¹‚½‚¢
 
 	sequencer = loadFile(fn);
+
 	getfileinfo(NULL, NULL, (int *)&player_data.length);
+
 #if !N_VERSION
-	if (sequencer == NULL) return 1;
+	if (sequencer == NULL)
+	{ 
+		return 1; 
+	}
+
 	samplerate = sequencer->GetRate(sequencer);
 	ch = sequencer->GetChannel(sequencer);
 	maxlatency = mod.outMod->Open(samplerate, ch, 16, 0, 0);
 	if (maxlatency < 0)
 	{
-		if (sequencer != NULL) sequencer->Term(sequencer);
+		if (sequencer != NULL) 
+		{
+			sequencer->Term(sequencer);
+		}
+
 		return 1;
 	}
 	mod.SetInfo(0, samplerate / 1000, ch, 0);

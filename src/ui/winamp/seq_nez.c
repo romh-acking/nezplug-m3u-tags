@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "tag/tag.h"
 
 #include "nezvm/nezvm.h"
 //#include "common/nsfsdk/nsfsdk.h"
@@ -24,7 +25,7 @@
 #include "ui/nezplug/Dialog.h"
 
 typedef signed short Int16;
-unsigned NEZ_extract(char *lpszSrcFile, void **ppbuf);
+unsigned NEZ_extract(char* lpszSrcFile, void** ppbuf);
 
 /* NEZ sequencer struct */
 typedef struct {
@@ -47,10 +48,10 @@ typedef struct {
 	int isplaying;			/* 1:playing 0:stoped */
 
 	int bufsize;
-	Int16 *buf;
+	Int16* buf;
 	int bufp;
 
-	NEZ_PLAY *hnsf;
+	NEZ_PLAY* hnsf;
 
 	enum {
 		CONTROLER_OFF,
@@ -70,7 +71,7 @@ static struct {
 
 	HINSTANCE hDllInstance;
 	char cfgname[MAX_PATH];
-	char *lpSection;
+	char* lpSection;
 
 	int disable_nsfext;
 	int disable_pceext;
@@ -90,7 +91,7 @@ static struct {
 } setting;
 
 typedef struct {
-	char *key;
+	char* key;
 	int num;
 } KEYINT;
 
@@ -129,7 +130,7 @@ extern int (*memview_memread)(int a);
 
 
 #define PTR__ ((NEZSEQ *)(this__->work))
-static void Play(SEQUENCER *this__)
+static void Play(SEQUENCER* this__)
 {
 
 	PTR__->loopc = 0;
@@ -149,14 +150,14 @@ static void Play(SEQUENCER *this__)
 	NEZRender(PTR__->hnsf, PTR__->buf, PTR__->bufsize);
 }
 
-static void Stop(SEQUENCER *this__)
+static void Stop(SEQUENCER* this__)
 {
 	PTR__->loopc = 0;
 	PTR__->isplaying = 0;
 	PTR__->playedtime2 = 0;
 }
 
-static void Term(SEQUENCER *this__)
+static void Term(SEQUENCER* this__)
 {
 	SetStateControler(0);
 	NEZDelete(PTR__->hnsf);
@@ -168,7 +169,7 @@ static unsigned DivFix(unsigned p1, unsigned p2, unsigned fix)
 {
 	unsigned ret;
 	ret = p1 / p2;
-	p1  = p1 % p2;/* p1 = p1 - p2 * ret; */
+	p1 = p1 % p2;/* p1 = p1 - p2 * ret; */
 	while (fix--)
 	{
 		p1 += p1;
@@ -184,11 +185,11 @@ static unsigned DivFix(unsigned p1, unsigned p2, unsigned fix)
 
 #define MAX_SAMPLERATE 192000
 #define FADE_SHIFT 12
-static void Mix(SEQUENCER *this__, void *buf, int numsamp)
+static void Mix(SEQUENCER* this__, void* buf, int numsamp)
 {
-	Int16 *d;
+	Int16* d;
 	int s;
-	d = (Int16 *)buf;
+	d = (Int16*)buf;
 	PTR__->playedtime += numsamp;
 	PTR__->playedtime2 += numsamp;
 	if (PTR__->channel == 2)
@@ -268,7 +269,8 @@ static void Mix(SEQUENCER *this__, void *buf, int numsamp)
 			PTR__->loopc++;
 			PTR__->playedtime -= PTR__->looptime;
 		}
-	} else {
+	}
+	else {
 #if 0
 		if (PTR__->playtime && PTR__->playedtime > PTR__->playtime)
 		{
@@ -303,7 +305,7 @@ static void Mix(SEQUENCER *this__, void *buf, int numsamp)
 
 }
 
-static void SetPosition(SEQUENCER *this__, int time_in_ms)
+static void SetPosition(SEQUENCER* this__, int time_in_ms)
 {
 	int numsamp;
 	int time_in_samp = MulDiv(PTR__->frequency, time_in_ms, 1000);
@@ -312,37 +314,37 @@ static void SetPosition(SEQUENCER *this__, int time_in_ms)
 		Play(this__);
 	}
 	numsamp = time_in_samp - PTR__->playedtime2;
-	PTR__->playedtime  += numsamp;
+	PTR__->playedtime += numsamp;
 	PTR__->playedtime2 += numsamp;
 	NEZRender(PTR__->hnsf, NULL, numsamp);
 	PTR__->bufp = 0;
 	NEZRender(PTR__->hnsf, PTR__->buf, PTR__->bufsize);
 }
-static int GetPosition(SEQUENCER *this__)
+static int GetPosition(SEQUENCER* this__)
 {
 	return MulDiv(PTR__->playedtime2, 1000, PTR__->frequency);
 }
-static int GetRate(SEQUENCER *this__)
+static int GetRate(SEQUENCER* this__)
 {
 	return PTR__->frequency;
 }
 
-static int GetChannel(SEQUENCER *this__)
+static int GetChannel(SEQUENCER* this__)
 {
 	return PTR__->channel;
 }
 
-static int GetPriority(SEQUENCER *this__)
+static int GetPriority(SEQUENCER* this__)
 {
 	return setting.priority;
 }
 
-static int GetLoopCount(SEQUENCER *this__)
+static int GetLoopCount(SEQUENCER* this__)
 {
 	return PTR__->loopc;
 }
 
-static int IsPlaying(SEQUENCER *this__)
+static int IsPlaying(SEQUENCER* this__)
 {
 	return PTR__->isplaying;
 }
@@ -361,7 +363,7 @@ static int IsPlaying(SEQUENCER *this__)
 
 static void WritePrivateProfileInt(LPCSTR sect, LPCSTR key, UINT data, LPCSTR file)
 {
-	char temp[32], *p;
+	char temp[32], * p;
 	temp[30] = '0';
 	temp[31] = '\0';
 	if (data == 0)
@@ -406,7 +408,7 @@ void InitNezSequencer(HINSTANCE hDllInstance)
 	{
 		extern int NESAPUVolume;
 		NESAPUVolume = GetSettingInt("NESAPUVolume", 64);
-		if (NESAPUVolume < 0) NESAPUVolume =  0;
+		if (NESAPUVolume < 0) NESAPUVolume = 0;
 		if (NESAPUVolume > 255) NESAPUVolume = 255;
 		SetSettingInt("NESAPUVolume", NESAPUVolume);
 	}
@@ -417,12 +419,12 @@ void InitNezSequencer(HINSTANCE hDllInstance)
 	}
 	{
 		extern int NSF_noise_random_reset;
-		NSF_noise_random_reset  = GetSettingInt("NSFNoiseRandomReset", 0);
+		NSF_noise_random_reset = GetSettingInt("NSFNoiseRandomReset", 0);
 		SetSettingInt("NSFNoiseRandomReset", NSF_noise_random_reset);
 	}
 	{
 		extern int NSF_2A03Type;
-		NSF_2A03Type  = GetSettingInt("2A03Type", 1);
+		NSF_2A03Type = GetSettingInt("2A03Type", 1);
 		SetSettingInt("2A03Type", NSF_2A03Type);
 	}
 	{
@@ -453,20 +455,20 @@ void InitNezSequencer(HINSTANCE hDllInstance)
 	{
 		extern int MSXPSGVolume;
 		MSXPSGVolume = GetSettingInt("MSXPSGVolume", 64);
-		if (MSXPSGVolume < 0) MSXPSGVolume =  0;
+		if (MSXPSGVolume < 0) MSXPSGVolume = 0;
 		if (MSXPSGVolume > 255) MSXPSGVolume = 255;
 		SetSettingInt("MSXPSGVolume", MSXPSGVolume);
 	}
 	{
 		extern int LowPassFilterLevel;
 		LowPassFilterLevel = GetSettingInt("LowPassFilterLevel", 16);
-		if (LowPassFilterLevel <  0) LowPassFilterLevel =  0;
+		if (LowPassFilterLevel < 0) LowPassFilterLevel = 0;
 		if (LowPassFilterLevel > 32) LowPassFilterLevel = 32;
 		SetSettingInt("LowPassFilterLevel", LowPassFilterLevel);
 	}
 	{
 		extern int Always_stereo;
-		Always_stereo  = GetSettingInt("AlwaysStereo", 0);
+		Always_stereo = GetSettingInt("AlwaysStereo", 0);
 		SetSettingInt("AlwaysStereo", Always_stereo);
 	}
 	{
@@ -508,9 +510,9 @@ void InitNezSequencer(HINSTANCE hDllInstance)
 
 	setting.loopcount = GetSettingInt("LoopCount", 2);
 	SetSettingInt("LoopCount", setting.loopcount);
-	setting.fadetime  = GetSettingInt("FadeoutTime", 5000);
+	setting.fadetime = GetSettingInt("FadeoutTime", 5000);
 	SetSettingInt("FadeoutTime", setting.fadetime);
-	setting.playtime  = GetSettingInt("DefaultPlayTime", 300000);
+	setting.playtime = GetSettingInt("DefaultPlayTime", 300000);
 	SetSettingInt("DefaultPlayTime", setting.playtime);
 	setting.realplaytime = GetSettingInt("DisplayRealPlayTime", 1);
 	SetSettingInt("DisplayRealPlayTime", setting.realplaytime);
@@ -529,7 +531,7 @@ void QuitNezSequencer(HINSTANCE hDllInstance)
 
 void AboutNezSequencer(HWND hwndParent)
 {
-	MessageBox(hwndParent, 
+	MessageBox(hwndParent,
 		"zlib 1.2.3\n"
 		"\t(C) 1995-2005 Jean-loup Gailly and Mark Adler\n\n"
 		"\t\thttp://www.zlib.org/\n"
@@ -547,19 +549,19 @@ void ConfigNezSequencer(HWND hwndParent)
 	ShellExecute(hwndParent, "open", setting.cfgname, NULL, NULL, SW_SHOW);
 }
 
-int infoNezBox(char *fn, HWND hwndParent)
+int infoNezBox(char* fn, HWND hwndParent)
 {
 	//ファイル情報呼び出し
 	//instance = setting.hDllInstance;
 	//ファイルをロードしてすぐ廃棄 = ファイル情報の格納
-	if(memview_memread == NULL)Term(loadNezFile(fn));
+	if (memview_memread == NULL)Term(loadNezFile(fn));
 	NEZFileInfoDlg(setting.hDllInstance, hwndParent);
 	return 0;
 }
 
-static int isOurList2(char *fn, char *us, char *ls)
+static int isOurList2(char* fn, char* us, char* ls)
 {
-	char *p;
+	char* p;
 	if (fn == NULL) return 0;
 	for (p = fn; *p != '\0'; p++)
 	{
@@ -571,9 +573,9 @@ static int isOurList2(char *fn, char *us, char *ls)
 	}
 	return 0;
 }
-static int isOurList(char *fn, char *us, char *ls)
+static int isOurList(char* fn, char* us, char* ls)
 {
-	char *p;
+	char* p;
 	if (fn == NULL) return 0;
 	for (p = fn; *p != '\0'; p++)
 	{
@@ -587,7 +589,7 @@ static int isOurList(char *fn, char *us, char *ls)
 	return 0;
 }
 
-static int isOurLists(char *fn)
+static int isOurLists(char* fn)
 {
 	int p;
 	/* ::NEZプレイリストは常に制御を得る */
@@ -603,22 +605,22 @@ static int isOurLists(char *fn)
 }
 
 
-int isOurNezFile(char *fn)
+int isOurNezFile(char* fn)
 {
 	return isOurLists(fn);
 }
 
-static char *skipspace(char *p)
+static char* skipspace(char* p)
 {
-	for (;*p == ' ' || *p == '\t';p++)
+	for (; *p == ' ' || *p == '\t'; p++)
 		if (*p == '\0') break;
 	return p;
 }
 
-static char *getfnamebase(char *p)
+static char* getfnamebase(char* p)
 {
-	char *rp;
-	for (rp = p; *p != '\0' ; p++)
+	char* rp;
+	for (rp = p; *p != '\0'; p++)
 	{
 		if (IsDBCSLeadByte(*p))
 		{
@@ -627,15 +629,15 @@ static char *getfnamebase(char *p)
 		}
 		switch (*p)
 		{
-			case ':': case '\\': case '/':
-				rp = p + 1;
-				break;
+		case ':': case '\\': case '/':
+			rp = p + 1;
+			break;
 		}
 	}
 	return rp;
 }
 
-static char *gettext(char *p, char *pt)
+static char* gettext(char* p, char* pt)
 {
 	int loop_flag = 1;
 	p = skipspace(p);
@@ -652,30 +654,30 @@ static char *gettext(char *p, char *pt)
 		}
 		switch (*p)
 		{
-			case '\t':
-				if (pt) *(pt++) = ' ';
-				p++;
-				break;
-			case '\\':
-				if (*(++p) != '\0') {
-					if (pt) *(pt++) = *p;
-					p++;
-				}
-				break;
-			case '\0':
-			case ',':
-				loop_flag = 0;
-				break;
-			default:
+		case '\t':
+			if (pt) *(pt++) = ' ';
+			p++;
+			break;
+		case '\\':
+			if (*(++p) != '\0') {
 				if (pt) *(pt++) = *p;
 				p++;
-				break;
+			}
+			break;
+		case '\0':
+		case ',':
+			loop_flag = 0;
+			break;
+		default:
+			if (pt) *(pt++) = *p;
+			p++;
+			break;
 		}
 	}
 	if (pt) *pt = '\0';
 	return p;
 }
-static char *getnum_sub(char *p, int *pi, int type)
+static char* getnum_sub(char* p, int* pi, int type)
 {
 	int loop_flag = 1, n = 0, radix = 10;
 	p = skipspace(p);
@@ -693,87 +695,59 @@ static char *getnum_sub(char *p, int *pi, int type)
 	{
 		switch (*p)
 		{
-			case 'A':	case 'B':	case 'C':
-			case 'D':	case 'E':	case 'F':
-				if (radix < 16)
-				{
-					loop_flag = 0;
-					break;
-				}
-				n = n * radix + (*(p++) - 'A' + 10);
-				break;
-			case 'a':	case 'b':	case 'c':
-			case 'd':	case 'e':	case 'f':
-				if (radix < 16)
-				{
-					loop_flag = 0;
-					break;
-				}
-				n = n * radix + (*(p++) - 'a' + 10);
-				break;
-			case '2':	case '3':	case '4':	case '5':
-			case '6':	case '7':	case '8':	case '9':
-				if (radix < 10)
-				{
-					loop_flag = 0;
-					break;
-				}
-			case '0':	case '1':
-				n = n * radix + (*(p++) - '0');
-				break;
-			default:
+		case 'A':	case 'B':	case 'C':
+		case 'D':	case 'E':	case 'F':
+			if (radix < 16)
+			{
 				loop_flag = 0;
 				break;
+			}
+			n = n * radix + (*(p++) - 'A' + 10);
+			break;
+		case 'a':	case 'b':	case 'c':
+		case 'd':	case 'e':	case 'f':
+			if (radix < 16)
+			{
+				loop_flag = 0;
+				break;
+			}
+			n = n * radix + (*(p++) - 'a' + 10);
+			break;
+		case '2':	case '3':	case '4':	case '5':
+		case '6':	case '7':	case '8':	case '9':
+			if (radix < 10)
+			{
+				loop_flag = 0;
+				break;
+			}
+		case '0':	case '1':
+			n = n * radix + (*(p++) - '0');
+			break;
+		default:
+			loop_flag = 0;
+			break;
 		}
 	}
 	if (pi)
 	{
 		switch (type)
 		{
-			default:
-				*pi = n;
-				break;
-			case 1:	/* nezamp list */
-				*pi = n + (radix != 10);
-				break;
-			case 2:	/* in_kss list */
-				*pi = n + 1;
-				break;
+		default:
+			*pi = n;
+			break;
+		case 1:	/* nezamp list */
+			*pi = n + (radix != 10);
+			break;
+		case 2:	/* in_kss list */
+			*pi = n + 1;
+			break;
 		}
 	}
 	return p;
 }
-static char *getnum(char *p, int *pi)
+static char* getnum(char* p, int* pi)
 {
 	return getnum_sub(p, pi, 0);
-}
-
-static char *gettime(char *p, int *pi)
-{
-	int np = 0, n;
-	p--;
-	do
-	{
-		p = skipspace(p + 1);
-		p = getnum(p, &n);
-		np =  np * 60 + n;
-		p = skipspace(p);
-	} while (*p == ':');
-	if (*p == '.')
-	{
-		p = skipspace(p + 1);
-		p = getnum(p, &n);
-	}
-	else if (*p == '\'')
-	{
-		p = skipspace(p + 1);
-		p = getnum(p, &n);
-		n *= 10;
-	}
-	else
-		n = 0;
-	if (pi) *pi = np * 1000 + n;
-	return p;
 }
 
 typedef struct {
@@ -786,60 +760,27 @@ typedef struct {
 	int loopcount;
 } NEZINFO;
 
-static void ExtractNezInfo(NEZINFO *pni, char *fn)
+static void ExtractNezInfo(NEZINFO* pni, char* fn)
 {
-	char *p = fn;
+	char* p = fn;
 	int isnezlist, isaylist;
 	ZeroMemory(pni, sizeof(NEZINFO));
-	pni->fadetime = 5000;	/* 5sec */
+	pni->fadetime = setting.fadetime;
 	pni->loopcount = setting.loopcount;
-
-	/* Only ::NSF playlist has 1based song no. */
-	isnezlist = isOurList(fn, "NSF", "nsf") != 0;
-	isaylist = isOurList2(fn, "AY", "ay") != 0;
-	p += isOurLists(fn);
-	if (p - fn - 5 + isaylist > 0) MoveMemory(pni->fn, fn, p - fn - 5 + isaylist);
-
-	pni->title[0] = '\0';
-
-	p = skipspace(p);
-	if (*(p++) != ',') return;
-	p = getnum_sub(p, &pni->songno, isnezlist ? 1 : 2);
-	p = skipspace(p);
-	if (*(p++) != ',') return;
-	p = gettext(p, pni->title);
-	p = skipspace(p);
-	if (*(p++) != ',') return;
-	p = gettime(p, &pni->playtime);
-	p = skipspace(p);
-	if (*(p++) != ',') return;
-	p = gettime(p, &pni->looptime);
-	p = skipspace(p);
-	if (*p == '-') {
-		pni->looptime = pni->playtime - pni->looptime;
-		p = skipspace(p+1);
-	}
-	if (*(p++) != ',') return;
-	p = skipspace(p);
-	if (*p && *p != ',') p = gettime(p, &pni->fadetime);
-	p = skipspace(p);
-	if (*(p++) != ',') return;
-	p = skipspace(p);
-	if (*p && *p != ',') p = getnum(p, &pni->loopcount);
 }
 
 static char currentfn[MAX_PATH];
 
-static int isKSS(char *buf)
+static int isKSS(char* buf)
 {
-	if (!memcmp(buf,"KSCC",4)) return 0x10;
-	if (!memcmp(buf,"KSSX",4)) return 0x10 + ((unsigned char)buf[0xe]);
+	if (!memcmp(buf, "KSCC", 4)) return 0x10;
+	if (!memcmp(buf, "KSSX", 4)) return 0x10 + ((unsigned char)buf[0xe]);
 	return 0;
 }
 
-static void gettitle(char *fn, char *tmpbuf, int tmpbuflen, NEZINFO *nezinfo)
+static void gettitle(char* fn, char* tmpbuf, int tmpbuflen, NEZINFO* nezinfo)
 {
-	FILE *fp = 0;
+	FILE* fp = 0;
 	char fbuf[512];
 	tmpbuf[0] = '\0';
 	do
@@ -847,7 +788,7 @@ static void gettitle(char *fn, char *tmpbuf, int tmpbuflen, NEZINFO *nezinfo)
 		fp = fopen(fn, "rb");
 		if (!fp) break;
 		if (fread(fbuf, 1, 0x40, fp) != 0x40) break;
-		if (!memcmp(fbuf,"NESM",4))
+		if (!memcmp(fbuf, "NESM", 4))
 		{
 			int numsongs;
 			if (nezinfo->songno < 1) nezinfo->songno = GetControler();
@@ -858,7 +799,7 @@ static void gettitle(char *fn, char *tmpbuf, int tmpbuflen, NEZINFO *nezinfo)
 			tmpbuf[32] = '\0';
 			if (numsongs > 1) wsprintf(tmpbuf + lstrlen(tmpbuf), " (%d/%d)", nezinfo->songno, numsongs);
 		}
-		else if (!memcmp(fbuf,"GBS",3))
+		else if (!memcmp(fbuf, "GBS", 3))
 		{
 			int numsongs;
 			if (nezinfo->songno < 1) nezinfo->songno = GetControler();
@@ -869,18 +810,18 @@ static void gettitle(char *fn, char *tmpbuf, int tmpbuflen, NEZINFO *nezinfo)
 			tmpbuf[32] = '\0';
 			if (numsongs > 1) wsprintf(tmpbuf + lstrlen(tmpbuf), " (%d/%d)", nezinfo->songno, numsongs);
 		}
-		else if (!memcmp(fbuf,"SGC",3))
+		else if (!memcmp(fbuf, "SGC", 3))
 		{
-			int numsongs,firstse,lastse;
+			int numsongs, firstse, lastse;
 			numsongs = ((int)fbuf[0x25]) & 255;
 			firstse = fbuf[0x26];
 			lastse = fbuf[0x27];
-			if(firstse < numsongs
-			|| firstse > lastse
-			|| firstse == 0){
+			if (firstse < numsongs
+				|| firstse > lastse
+				|| firstse == 0) {
 				firstse = lastse = 0;
 			}
-			numsongs = numsongs + lastse - firstse + (firstse?1:0);
+			numsongs = numsongs + lastse - firstse + (firstse ? 1 : 0);
 			if (nezinfo->songno < 1) nezinfo->songno = GetControler();
 			if (nezinfo->songno < 1 || nezinfo->songno > numsongs) nezinfo->songno = fbuf[0x24];
 			fseek(fp, 0x0040, SEEK_SET);
@@ -903,10 +844,10 @@ static void gettitle(char *fn, char *tmpbuf, int tmpbuflen, NEZINFO *nezinfo)
 			if (fread(fbuf, 1, 0x10, fp) != 0x10) break;
 			if (nezinfo->songno < 1) nezinfo->songno = GetControler();
 			if (nezinfo->songno < 1 || nezinfo->songno > numsongs) nezinfo->songno = fbuf[5];
-			if (!memcmp(fbuf,"MGS",3) || !memcmp(fbuf,"MPK",3))
+			if (!memcmp(fbuf, "MGS", 3) || !memcmp(fbuf, "MPK", 3))
 			{
 				int c;
-				char *p = tmpbuf;
+				char* p = tmpbuf;
 				fseek(fp, top, SEEK_SET);
 				do {
 					c = fgetc(fp);
@@ -916,27 +857,25 @@ static void gettitle(char *fn, char *tmpbuf, int tmpbuflen, NEZINFO *nezinfo)
 					c = fgetc(fp);
 					if (c >= 0x20)
 						*p++ = c;
-				}
-				while (c != EOF && c != 0x1a && c != 0x0a && p < tmpbuf + tmpbuflen - 1);
+				} while (c != EOF && c != 0x1a && c != 0x0a && p < tmpbuf + tmpbuflen - 1);
 				*p = '\0';
 			}
-			else if (!memcmp(fbuf,"MBM",3))
+			else if (!memcmp(fbuf, "MBM", 3))
 			{
 				int c;
-				char *p = tmpbuf;
+				char* p = tmpbuf;
 				fseek(fp, top + 0x0010, SEEK_SET);
 				do
 				{
 					c = fgetc(fp);
 					if (c >= 0x20) *p++ = c;
-				}
-				while (c != EOF && p < tmpbuf + 0x28);
+				} while (c != EOF && p < tmpbuf + 0x28);
 				*p = '\0';
 			}
-			else if (!memcmp(fbuf,"BTO KINROU 5th",14))
+			else if (!memcmp(fbuf, "BTO KINROU 5th", 14))
 			{
 				int c, base, title;
-				char *p = tmpbuf;
+				char* p = tmpbuf;
 				fseek(fp, top + 0x1150, SEEK_SET);
 				if (fread(fbuf, 1, 4, fp) != 4) break;
 				/* MPK2KSS check */
@@ -955,8 +894,7 @@ static void gettitle(char *fn, char *tmpbuf, int tmpbuflen, NEZINFO *nezinfo)
 					c = fgetc(fp);
 					if (c >= 0x20)
 						*p++ = c;
-				}
-				while (c != EOF && c != 0x00 && p < tmpbuf + tmpbuflen - 1);
+				} while (c != EOF && c != 0x00 && p < tmpbuf + tmpbuflen - 1);
 				*p = '\0';
 			}
 			else
@@ -966,64 +904,65 @@ static void gettitle(char *fn, char *tmpbuf, int tmpbuflen, NEZINFO *nezinfo)
 				wsprintf(tmpbuf + lstrlen(tmpbuf), " (%02X/%02X)", nezinfo->songno - 1, numsongs - 1);
 			}
 		}
-	}
-	while(0);
+	} while (0);
 	if (fp) fclose(fp);
 }
 
-int getNezFileInfo(char *fn, char *title, int *length_in_ms)
+int getNezFileInfo(char* fn, char* title, int* length_in_ms)
 {
 	NEZINFO nezinfo;
 	int tmptime = 0;
 	char tmpbuf[MAX_PATH];
 	tmpbuf[0] = '\0';
 	nezinfo.songno = 0;
+	struct TAG_METADATA* tm = (struct global*)malloc(sizeof(struct TAG_METADATA));
+
+	bool playlistNameFromM3uTag = false;
 
 	if (fn == NULL || fn[0] == '\0')
 	{
 		fn = currentfn;
 	}
 
-	if (fn && isOurLists(fn))
+	if (fn != NULL)
 	{
-		ExtractNezInfo(&nezinfo, fn);
-		lstrcpy(tmpbuf, nezinfo.title);
-		if (nezinfo.playtime && setting.realplaytime && nezinfo.loopcount)
-			tmptime = nezinfo.playtime + nezinfo.looptime * (nezinfo.loopcount - 1) + nezinfo.fadetime ;
+		tm = loadTag2(fn);
+
+		if (tm != NULL && tm->isValid)
+		{
+			*length_in_ms = tm->length;
+
+			if (strlen(tm->title) > 0) 
+			{
+				playlistNameFromM3uTag = true;
+				lstrcpy(tmpbuf, tm->title);
+			}
+		}
 		else
-			tmptime = nezinfo.playtime ;
-		fn = nezinfo.fn;
+		{
+			*length_in_ms = setting.playtime + setting.fadetime;
+		}
 	}
-	if (tmptime == 0)
-	{
-		if (setting.realplaytime)
-			tmptime = setting.playtime + setting.fadetime;
-		else
-			tmptime = setting.playtime;
-	}
-	if (fn != NULL && tmpbuf[0] == '\0')
+
+	if (!playlistNameFromM3uTag && fn != NULL && tmpbuf[0] == '\0')
 	{
 		gettitle(fn, tmpbuf, sizeof(tmpbuf), &nezinfo);
-	}
-	if (fn != NULL && tmpbuf[0] == '\0')
-	{
+
+		// Print song title for winamp playlist
 		nezinfo.songno = GetControler();
-		lstrcpy(tmpbuf,getfnamebase(fn));
-		wsprintf(tmpbuf + lstrlen(tmpbuf), " ($%02X)", nezinfo.songno-1);
+		lstrcpy(tmpbuf, getfnamebase(fn));
+		wsprintf(tmpbuf + lstrlen(tmpbuf), " ($%02X)", nezinfo.songno - 1);
 	}
+
 	if (title != NULL)
 	{
 		lstrcpy(title, tmpbuf);
-	}
-	if (length_in_ms)
-	{
-		*length_in_ms = tmptime;
 	}
 
 	return 1;
 }
 
-static BOOL IsExistFile(char *path)
+static BOOL IsExistFile(char* path)
 {
 	HANDLE hFile;
 	hFile = CreateFile(
@@ -1039,9 +978,9 @@ static BOOL IsExistFile(char *path)
 	return TRUE;
 }
 
-static void GetPathNoExt(char *des, char *src)
+static void GetPathNoExt(char* des, char* src)
 {
-	char *p = NULL;
+	char* p = NULL;
 	while (*src != '\0')
 	{
 		if (IsDBCSLeadByte(*src))
@@ -1052,12 +991,12 @@ static void GetPathNoExt(char *des, char *src)
 		}
 		switch (*src)
 		{
-			case ':': case '\\': case '/':
-				p = NULL;
-				break;
-			case '.':
-				p = des;
-				break;
+		case ':': case '\\': case '/':
+			p = NULL;
+			break;
+		case '.':
+			p = des;
+			break;
 		}
 		*(des++) = *(src++);
 	}
@@ -1067,9 +1006,9 @@ static void GetPathNoExt(char *des, char *src)
 		*des = '\0';
 }
 
-static char *NezSearchPath(char *fn, char *searchPath)
+static char* NezSearchPath(char* fn, char* searchPath)
 {
-	static char *extlist[] =
+	static char* extlist[] =
 	{
 		".NEZ", ".NSF", ".KSS", ".GBR", ".GBS", ".HES", ".PCE", ".AY", ".CPC", ".NSZ", ".NSD", ".ZIP", ".SGC", 0
 	};
@@ -1092,31 +1031,123 @@ static char *NezSearchPath(char *fn, char *searchPath)
 
 LPTSTR GetDLLArgv0(void);
 
-
-SEQUENCER *loadNezFile(char *fn)
+static char* substr(char* arr, int begin, int len)
 {
-	NEZSEQ *p = NULL;
-	NEZINFO nezinfo;
-	int playtime = 0, looptime = 0, fadetime = setting.fadetime, loopcount = setting.loopcount;
+	char* res = malloc(len + 1);
+
+	for (int i = 0; i < len; i++) {
+		res[i] = *(arr + begin + i);
+	}
+
+	res[len] = 0;
+	return res;
+}
+
+
+int lastIndexOfSlash(char* arr)
+{
+	int lastIndex = -1;
+	for (int i = 0; i < strlen(arr); i++)
+	{
+		if (strncmp("\\", &arr[i], 1) == 0)
+		{
+			lastIndex = i;
+		}
+	}
+
+	return lastIndex;
+}
+
+char* concat(const char* s1, const char* s2)
+{
+	char* result = malloc(strlen(s1) + strlen(s2) + 1); // +1 for the null-terminator
+	// in real code you would check for errors in malloc here
+	strcpy(result, s1);
+	strcat(result, s2);
+	return result;
+}
+
+struct TAG_METADATA* loadTag2(char* fn)
+{
+	struct TAG_METADATA* tm = (struct tm*)malloc(sizeof(struct TAG_METADATA));
+
+	if (fn == NULL) 
+	{
+		tm->isValid = false;
+		return tm;
+	}
+
+	// You are trying to open an individual NSF file.
+	if (!strstr(fn, ".m3u."))
+	{
+		tm->isValid = false;
+		return tm;
+	}
+
+	int index = lastIndexOfSlash(fn);
+
+	if (index == -1)
+	{
+		tm->isValid = false;
+		return tm;
+	}
+
+	char* baseDirectory = substr(fn, 0, index + 1);
+	char* songM3UFile = substr(fn, index + 1, strlen(fn) - index + 1);
+
+	// https://stackoverflow.com/questions/8465006/how-do-i-concatenate-two-strings-in-c#8465083
+	char* tagFile = strcat(baseDirectory, "!tags.m3u");
+
+	FILE* input_file;
+	if (input_file = fopen(tagFile, "r"))
+	{
+		tm = loadTag(input_file, songM3UFile);
+
+		if (tm == NULL)
+		{
+			return NULL;
+		}
+
+		baseDirectory = substr(fn, 0, index + 1);
+		tm->source = concat(baseDirectory, tm->source);
+
+		fclose(input_file);
+		printf("file exists");
+	}
+
+	return tm;
+}
+
+SEQUENCER* loadNezFile(char* fn)
+{
+	if (fn == NULL)
+	{
+		return;
+	}
+
+	NEZSEQ* p = NULL;
+	struct TAG_METADATA* tm = (struct tm*)malloc(sizeof(struct TAG_METADATA));
+
+	int playtime = 0, looptime = 0, fadetime = setting.fadetime, loopcount = setting.loopcount, subtune = 0;
 	char searchPath[MAX_PATH];
 	static char prevPath[MAX_PATH] = "";
 	int difFile = 0;
 	int nezsize;
-	void *nezbuf;
-	NEZ_PLAY *hnsf;
+	void* nezbuf;
+	NEZ_PLAY* hnsf;
 
 	lstrcpy(currentfn, fn);
 
-	nezinfo.songno = 0;
+	tm = loadTag2(fn);
 
-	if (isOurLists(fn))
+	if (tm->isValid)
 	{
-		ExtractNezInfo(&nezinfo, fn);
-		fn = nezinfo.fn;
-		playtime = nezinfo.playtime;
-		looptime = nezinfo.looptime;
-		fadetime = nezinfo.fadetime;
-		loopcount = nezinfo.loopcount;
+		playtime = tm->length;
+		fadetime = tm->fade;
+		fn = tm->source;
+		subtune = tm->subtune + 1;
+		//looptime = tm->loop;
+		//loopcount = tm->loopCount;
 	}
 	else
 	{
@@ -1130,15 +1161,21 @@ SEQUENCER *loadNezFile(char *fn)
 	fn = NezSearchPath(fn, searchPath);
 
 	nezsize = NEZ_extract(fn, &nezbuf);
-	if (nezsize == 0) return NULL;
+	if (nezsize == 0)
+	{
+		return NULL;
+	}
 
 	hnsf = NEZNew();
 	NEZLoad(hnsf, nezbuf, nezsize);
 	free(nezbuf);
 
-	if (!hnsf) return NULL;
+	if (!hnsf)
+	{
+		return NULL;
+	}
 
-	p = (NEZSEQ *)malloc(sizeof(NEZSEQ));
+	p = (NEZSEQ*)malloc(sizeof(NEZSEQ));
 	if (p == NULL)
 	{
 		NEZDelete(hnsf);
@@ -1154,7 +1191,7 @@ SEQUENCER *loadNezFile(char *fn)
 
 	p->bufsize = setting.frequency / 50;	/* 20 ms */
 	p->bufp = 0;
-	p->buf = (Int16 *)malloc(p->bufsize * sizeof(Int16) * 2);
+	p->buf = (Int16*)malloc(p->bufsize * sizeof(Int16) * 2);
 	if (p->buf == NULL)
 	{
 		NEZDelete(p->hnsf);
@@ -1162,12 +1199,15 @@ SEQUENCER *loadNezFile(char *fn)
 		return NULL;
 	}
 
-	if (nezinfo.songno == 0)
+	if (subtune == 0)
 	{
 		SetStateControler(1);
-		if (difFile) EnableControler(NEZGetSongStart(p->hnsf), -1);
+		if (difFile)
+		{
+			EnableControler(NEZGetSongStart(p->hnsf), -1);
+		}
 		EnableControler(NEZGetSongStart(p->hnsf), NEZGetSongMax(p->hnsf));
-		nezinfo.songno = GetControler();
+		subtune = GetControler();
 		if (setting.hookwinamp)
 		{
 			SubclassWinamp();
@@ -1185,14 +1225,29 @@ SEQUENCER *loadNezFile(char *fn)
 		p->controler_mode = CONTROLER_OFF;
 	}
 
-	if (nezinfo.songno > 0) NEZSetSongNo(p->hnsf, nezinfo.songno);
+	if (subtune != 0)
+	{
+		NEZSetSongNo(p->hnsf, subtune);
+	}
+
+	if (tm->isValid)
+	{
+		tm->subtune = subtune;
+	}
 
 	NEZSetFilter(p->hnsf, setting.filtertype);
 
 	p->loopc = 0;
 	p->isplaying = 0;
 
-	if (playtime == 0) playtime = setting.playtime;	/* 5分を仮定 */
+	if (playtime = 0) 
+	{
+		playtime = setting.playtime;
+		fadetime = setting.fadetime;
+	}
+
+	//setting.playtime = playtime;
+	//setting.fadetime = fadetime;
 
 	p->playtime = MulDiv(playtime, setting.frequency, 1000);
 	p->looptime = MulDiv(looptime, setting.frequency, 1000);
@@ -1215,7 +1270,7 @@ SEQUENCER *loadNezFile(char *fn)
 	return &p->seq;
 }
 
-static char *RegistWinampFormat(char *p, char *ext, char *desc)
+static char* RegistWinampFormat(char* p, char* ext, char* desc)
 {
 	lstrcpy(p, ext);
 	p += lstrlen(p) + 1;
@@ -1224,13 +1279,13 @@ static char *RegistWinampFormat(char *p, char *ext, char *desc)
 	return p;
 }
 
-char *StartWinamp(void)
+char* StartWinamp(void)
 {
 	static char extbuf[1024];
-	char *extp, *fntop;
+	char* extp, * fntop;
 
 	GetFullPathName(GetDLLArgv0(), MAX_PATH, setting.cfgname, &fntop);
-	for (extp = 0;*fntop;fntop++) if (*fntop == '.') extp = fntop;
+	for (extp = 0; *fntop; fntop++) if (*fntop == '.') extp = fntop;
 	if (!extp) extp = fntop;
 	lstrcpy(extp, ".ini");
 

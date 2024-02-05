@@ -48,6 +48,7 @@ int infoBox(char *fn);
 int getFileInfo(char *fn, char *title, int *length_in_ms);
 int isOurFile(char *fn);
 SEQUENCER *loadFile(char *fn);
+struct TAG_METADATA* loadTag2(char* fn);
 char *StartWinamp(void);
 
 #ifdef __cplusplus
