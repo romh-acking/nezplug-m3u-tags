@@ -99,3 +99,9 @@ Other alternatives are:
     * Currently, this cannot be done at a widescale
 
 The solution this fork provides is highly scalable and offers an easy way to read and adjust tags.
+
+## Special Thanks
+Some people I talked with to tackle this long standing issue with old sequenced formats:
+* CodaHighland
+* hcs
+* CyberBotX
